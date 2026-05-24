@@ -1,0 +1,60 @@
+{
+  "triplets": [
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "hips",
+      "relation": "responsible for",
+      "tail": "rotation",
+      "proposition": "the hips were designed to handle rotation"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "pelvis",
+      "relation": "facilitates",
+      "tail": "stride length",
+      "proposition": "the pelvis counter-rotates to facilitate stride length"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "improper hip rotation",
+      "relation": "affects",
+      "tail": "lower back",
+      "proposition": "improper hip rotation can result in additional stress on the lower back"
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "leg raises",
+      "relation": "targets",
+      "tail": "TFL",
+      "proposition": "Dr. Rob Jones advises against performing leg raises with the leg in front of the body, as this movement primarily targets the tiny muscle called the TFL in the hip flexor, rather than the glutes."
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "leg elevation",
+      "relation": "works",
+      "tail": "glute medius",
+      "proposition": "The viewer should tension their core, support themselves, and then elevate their leg to work the glute medius."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "requires",
+      "tail": "square stance",
+      "proposition": "Kelly Matthews is going to go over a conventional deadlift, and that is a square stance."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "requires",
+      "tail": "flat back",
+      "proposition": "There is a big emphasis in deadlifting on keeping a really flat back, and when learning, that is a really good place to start."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "involves",
+      "tail": "neutral spine",
+      "proposition": "However, when doing practice reps or submaximal efforts, keeping a neutral spine is a good place to be."
+    }
+  ]
+}
