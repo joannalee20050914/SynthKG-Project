@@ -1,81 +1,245 @@
-from config import DATA_FILE, TOP_M, TOP_K, N_HOP
-from graph_loader import load_graph, build_indices
-from retriever import (
-    retrieve_top_m,
-    extract_query_entities,
-    build_subgraph,
-    n_hop_traversal,
-    select_top_k_chunks,
-)
-from reranker import rerank
+import json
+import csv
+import time
+from pathlib import Path
+from datetime import datetime
+
+import jsonlines
+from extraction.extractor import extract_triplets   
+# 要等有 B 的函式才有辦法運行
+
+
+# Placeholder 版本：目前 B 的正式 extractor 還沒到位，所以先回傳空 triplets，讓 pipeline 外層流程可以先測通。
+#def extract_triplets(post_id: str, text: str, strategy: str) -> dict:
+#    return {
+#        "triplets": [],
+#        "model": f"placeholder_{strategy}",
+#        "input_tokens": 0,
+#        "output_tokens": 0,
+#        "raw_response": ""
+#    }
+
+
+def read_jsonl(input_path: str) -> list[dict]:
+    records = []
+    with jsonlines.open(input_path, "r") as reader:
+        for obj in reader:
+            records.append(obj)
+    return records
+
+
+def save_graph(triplets: list[dict], output_path: str):
+    data = {"triplets": triplets}
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def append_experiment_log_csv(log_path: str, row: dict):
+    file_exists = Path(log_path).exists()
+
+    with open(log_path, "a", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "post_id",
+                "strategy",
+                "model",
+                "input_tokens",
+                "output_tokens",
+                "execution_time_seconds",
+                "status",
+            ],
+        )
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(row)
+
+
+def append_error_log_csv(log_path: str, row: dict):
+    file_exists = Path(log_path).exists()
+
+    with open(log_path, "a", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "post_id",
+                "error_type",
+                "raw_response",
+            ],
+        )
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(row)
+
+
+def append_text_log(log_path: str, message: str):
+    with open(log_path, "a", encoding="utf-8-sig") as f:
+        f.write(message + "\n")
+
+
+def validate_triplets(post_id: str, triplets: list[dict]) -> list[dict]:
+    validated = []
+
+    for triplet in triplets:
+        # 沿用 B 的 source_post_id，但由你這邊做驗證
+        if triplet.get("source_post_id") != post_id:
+            triplet["source_post_id"] = post_id
+        validated.append(triplet)
+
+    return validated
+
+
+def process_one_record(
+    post_id: str,
+    text: str,
+    strategy: str,
+    experiment_csv: str,
+    error_csv: str,
+    text_log: str,
+) -> list[dict]:
+    start_time = time.perf_counter()
+
+    try:
+        result = extract_triplets(post_id, text, strategy)
+
+        triplets = result.get("triplets", [])
+        model = result.get("model", "")
+        input_tokens = result.get("input_tokens", "")
+        output_tokens = result.get("output_tokens", "")
+        raw_response = result.get("raw_response", "")
+
+        triplets = validate_triplets(post_id, triplets)
+
+        elapsed = time.perf_counter() - start_time
+
+        append_experiment_log_csv(
+            experiment_csv,
+            {
+                "post_id": post_id,
+                "strategy": strategy,
+                "model": model,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "execution_time_seconds": f"{elapsed:.3f}",
+                "status": "success",
+            },
+        )
+
+        append_text_log(
+            text_log,
+            f"[SUCCESS] post_id={post_id}, strategy={strategy}, "
+            f"triplets={len(triplets)}, time={elapsed:.3f}s"
+        )
+
+        return triplets
+
+    except Exception as e:
+        elapsed = time.perf_counter() - start_time
+
+        raw_response = ""
+        if hasattr(e, "raw_response"):
+            raw_response = str(e.raw_response)
+        else:
+            raw_response = str(e)
+
+        append_experiment_log_csv(
+            experiment_csv,
+            {
+                "post_id": post_id,
+                "strategy": strategy,
+                "model": "",
+                "input_tokens": "",
+                "output_tokens": "",
+                "execution_time_seconds": f"{elapsed:.3f}",
+                "status": "failed",
+            },
+        )
+
+        append_error_log_csv(
+            error_csv,
+            {
+                "post_id": post_id,
+                "error_type": type(e).__name__,
+                "raw_response": raw_response,
+            },
+        )
+
+        append_text_log(
+            text_log,
+            f"[FAILED] post_id={post_id}, strategy={strategy}, "
+            f"error_type={type(e).__name__}, time={elapsed:.3f}s"
+        )
+
+        return []
+
 
 def main():
-    print("=== Proposition-Entity Graph Retriever Demo ===")
+    base_dir = Path(__file__).resolve().parent
+    project_root = base_dir.parent
 
-    data = load_graph(DATA_FILE)
-    propositions, entity_to_props, prop_to_entities = build_indices(data)
+    input_file = project_root / "data" / "output" / "cleaned_posts_evaluated.jsonl"
 
-    # 中間成果 1：資料是否成功載入
-    print(f"\n[Debug] Total propositions loaded: {len(propositions)}")
-    print(f"[Debug] Total unique entities loaded: {len(entity_to_props)}")
+    zeroshot_output = base_dir / "graph_zeroshot.json"
+    fewshot_output = base_dir / "graph_fewshot.json"
 
-    query = input("\nPlease enter your query: ").strip()
+    experiment_csv = project_root / "experiment_logs.csv"
+    error_csv = project_root / "error_logs.csv"
+    text_log = project_root / "experiment_logs.txt"
 
-    # Step 1: retrieve top-M propositions
-    top_props = retrieve_top_m(query, propositions, TOP_M)
+    append_text_log(str(text_log), "=" * 80)
+    append_text_log(
+        str(text_log),
+        f"Pipeline started at {datetime.now().isoformat(timespec='seconds')}"
+    )
+    append_text_log(str(text_log), f"Reading input from: {input_file}")
 
-    # 中間成果 2：top-M propositions
-    print("\n=== [Debug] Top-M Retrieved Propositions ===")
-    for idx, prop in enumerate(top_props, start=1):
-        print(f"[{idx}] {prop['prop_id']} | {prop['proposition']}")
+    records = read_jsonl(str(input_file))
 
-    # 抓 query entities
-    all_entities = list(entity_to_props.keys())
-    query_entities = extract_query_entities(query, all_entities)
+    zeroshot_all_triplets = []
+    fewshot_all_triplets = []
 
-    # 中間成果 3：query entities
-    print("\n=== [Debug] Query Entities ===")
-    if query_entities:
-        print(query_entities)
-    else:
-        print("No query entities matched.")
+    for item in records:
+        post_id = item.get("post_id", "")
+        text = item.get("decontextualized_text", "")
 
-    # Step 2: build subgraph
-    subgraph = build_subgraph(top_props, prop_to_entities, entity_to_props)
+        if not post_id or not text:
+            append_text_log(str(text_log), f"[SKIPPED] invalid record: {item}")
+            continue
 
-    # 中間成果 4：subgraph 基本資訊
-    print("\n=== [Debug] Subgraph Summary ===")
-    print(f"Subgraph propositions: {len(subgraph['props'])}")
-    print(f"Subgraph entities: {len(subgraph['entities'])}")
+        # zeroshot
+        z_triplets = process_one_record(
+            post_id=post_id,
+            text=text,
+            strategy="zeroshot",
+            experiment_csv=str(experiment_csv),
+            error_csv=str(error_csv),
+            text_log=str(text_log),
+        )
+        zeroshot_all_triplets.extend(z_triplets)
 
-    # Step 3: N-hop traversal
-    if query_entities:
-        candidate_prop_ids = n_hop_traversal(query_entities, subgraph, prop_to_entities, N_HOP)
+        # fewshot
+        f_triplets = process_one_record(
+            post_id=post_id,
+            text=text,
+            strategy="fewshot",
+            experiment_csv=str(experiment_csv),
+            error_csv=str(error_csv),
+            text_log=str(text_log),
+        )
+        fewshot_all_triplets.extend(f_triplets)
 
-        print("\n=== [Debug] Candidate Proposition IDs after N-hop Traversal ===")
-        print(candidate_prop_ids)
+    save_graph(zeroshot_all_triplets, str(zeroshot_output))
+    save_graph(fewshot_all_triplets, str(fewshot_output))
 
-        candidates = select_top_k_chunks(candidate_prop_ids, subgraph, query, TOP_K)
-    else:
-        candidate_prop_ids = []
-        candidates = top_props[:TOP_K]
+    append_text_log(str(text_log), f"[DONE] Saved zeroshot graph to: {zeroshot_output}")
+    append_text_log(str(text_log), f"[DONE] Saved fewshot graph to: {fewshot_output}")
+    append_text_log(str(text_log), "Pipeline finished.")
 
-    # 中間成果 5：reranking 前的 candidates
-    print("\n=== [Debug] Candidates Before Reranking ===")
-    for idx, item in enumerate(candidates, start=1):
-        print(f"[{idx}] {item['prop_id']} | {item['proposition']}")
-
-    # Step 4: rerank
-    final_results = rerank(query, candidates, TOP_K)
-
-    print("\n=== Final Results ===")
-    for idx, item in enumerate(final_results, start=1):
-        print(f"\n[{idx}] Prop ID: {item['prop_id']}")
-        print(f"Post ID: {item['source_post_id']}")
-        print("Triplets:")
-        for t in item["triplets"]:
-            print(f"  - ({t['head']}, {t['relation']}, {t['tail']})")
-        print(f"Proposition: {item['proposition']}")
+    print(f"[Done] Zeroshot graph saved to: {zeroshot_output}")
+    print(f"[Done] Fewshot graph saved to: {fewshot_output}")
+    print(f"[Done] Experiment CSV saved to: {experiment_csv}")
+    print(f"[Done] Error CSV saved to: {error_csv}")
+    print(f"[Done] Text log saved to: {text_log}")
 
 
 if __name__ == "__main__":
