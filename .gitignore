@@ -1,7 +1,14 @@
 .env
+.env.*
+!.env.example
+
 .DS_Store
 __pycache__/
 venv/
+.venv/
+
 data/output/
 data/urls.txt
-*error_logs.csv
+
+error_logs.csv
+query_metrics.csv

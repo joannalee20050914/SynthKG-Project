@@ -1,0 +1,179 @@
+{
+  "triplets": [
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "hips",
+      "relation": "responsible for",
+      "tail": "rotation",
+      "proposition": "the hips were designed to handle rotation"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "pelvis",
+      "relation": "facilitates",
+      "tail": "stride length",
+      "proposition": "the pelvis counter-rotates to facilitate stride length"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "hip",
+      "relation": "performs",
+      "tail": "internal rotation",
+      "proposition": "the hip must internally rotate to maintain proper form"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "dynamic hip flexor stretch",
+      "relation": "improves",
+      "tail": "internal rotation",
+      "proposition": "a dynamic hip flexor stretch can be performed to improve internal rotation"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "90-90 position exercise",
+      "relation": "improves",
+      "tail": "squat mechanics",
+      "proposition": "regular practice of these exercises can help to improve squat mechanics"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "improper hip rotation",
+      "relation": "affects",
+      "tail": "lower back",
+      "proposition": "improper hip rotation can result in additional stress on the lower back"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "improper hip rotation",
+      "relation": "affects",
+      "tail": "knees",
+      "proposition": "improper hip rotation can result in additional stress on the knees"
+    },
+    {
+      "source_post_id": "DVHqg2FgWaK",
+      "head": "improper hip rotation",
+      "relation": "affects",
+      "tail": "ankles",
+      "proposition": "improper hip rotation can result in additional stress on the ankles"
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "leg raises",
+      "relation": "targets",
+      "tail": "TFL",
+      "proposition": "Dr. Rob Jones advises against performing leg raises with the leg in front of the body, as this movement primarily targets the tiny muscle called the TFL in the hip flexor, rather than the glutes."
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "leg raise",
+      "relation": "benefits",
+      "tail": "glutes",
+      "proposition": "A leg raise can be a beneficial exercise, but it is essential to perform it correctly to reap its benefits."
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "band around the ankle",
+      "relation": "allows for",
+      "tail": "proper glute engagement",
+      "proposition": "To effectively target the glutes, Dr. Rob Jones recommends using a band around the ankle and stepping over it with the other foot, which creates an angle that allows for proper glute engagement."
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "leg elevation",
+      "relation": "works",
+      "tail": "glute medius",
+      "proposition": "The viewer should tension their core, support themselves, and then elevate their leg to work the glute medius."
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "kicking the leg back",
+      "relation": "targets",
+      "tail": "glute max",
+      "proposition": "By bending forward and kicking the leg back, the glute max can also be targeted, putting it on a stretch."
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "proper form and technique",
+      "relation": "strengthens",
+      "tail": "glutes",
+      "proposition": "The goal of this exercise is to help a person get better, not older, by strengthening their glutes through proper form and technique."
+    },
+    {
+      "source_post_id": "C2FX1jdugkt",
+      "head": "Dr. Rob Jones",
+      "relation": "recommends",
+      "tail": "12-15 reps for 3-4 sets",
+      "proposition": "To achieve this, Dr. Rob Jones recommends doing 12-15 reps for 3-4 sets."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "Kelly Matthews",
+      "relation": "recommends",
+      "tail": "conventional deadlift",
+      "proposition": "Kelly Matthews is going to go over a conventional deadlift, and that is a square stance."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "requires",
+      "tail": "square stance",
+      "proposition": "Kelly Matthews is going to go over a conventional deadlift, and that is a square stance."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "involves",
+      "tail": "feet hips-width distance apart",
+      "proposition": "The viewer should start with their feet about hips-width distance apart, and the bar should be pretty much directly over the laces of their shoes."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "involves",
+      "tail": "bar over laces of shoes",
+      "proposition": "The viewer should start with their feet about hips-width distance apart, and the bar should be pretty much directly over the laces of their shoes."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "requires",
+      "tail": "overhand grip",
+      "proposition": "Kelly Matthews would start with an overhand grip, as it gets heavier if a person has a hard time with their grip."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "involves",
+      "tail": "mixed grip",
+      "proposition": "A mixed grip can be used, where one palm is in and one palm is out, or some lifting straps can be used."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "requires",
+      "tail": "straight bar path",
+      "proposition": "The goal for the deadlift should be to keep a pretty straight bar path, with the bar moving straight up and down, without migrating out or deviating from that one single line straight up."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "involves",
+      "tail": "shoulders slightly out in front of bar",
+      "proposition": "The shoulders should be slightly out in front of the bar, as they should not be behind the bar, which would make it hard to get leverage."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "requires",
+      "tail": "flat back",
+      "proposition": "There is a big emphasis in deadlifting on keeping a really flat back, and when learning, that is a really good place to start."
+    },
+    {
+      "source_post_id": "DFDZOMWMu4x",
+      "head": "deadlift",
+      "relation": "involves",
+      "tail": "neutral spine",
+      "proposition": "However, when doing practice reps or submaximal efforts, keeping a neutral spine is a good place to be."
+    }
+  ]
+}
