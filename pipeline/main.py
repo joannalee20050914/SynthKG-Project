@@ -1,23 +1,16 @@
 import json
 import csv
 import time
+import sys
 from pathlib import Path
 from datetime import datetime
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import jsonlines
 from extraction.extractor import extract_triplets   
-# 要等有 B 的函式才有辦法運行
-
-
-# Placeholder 版本：目前 B 的正式 extractor 還沒到位，所以先回傳空 triplets，讓 pipeline 外層流程可以先測通。
-#def extract_triplets(post_id: str, text: str, strategy: str) -> dict:
-#    return {
-#        "triplets": [],
-#        "model": f"placeholder_{strategy}",
-#        "input_tokens": 0,
-#        "output_tokens": 0,
-#        "raw_response": ""
-#    }
 
 
 def read_jsonl(input_path: str) -> list[dict]:
@@ -142,6 +135,9 @@ def process_one_record(
         else:
             raw_response = str(e)
 
+        print(f"[FAILED] post_id={post_id}, strategy={strategy}, error_type={type(e).__name__}")
+        print(f"[FAILED] error detail: {raw_response}")
+
         append_experiment_log_csv(
             experiment_csv,
             {
@@ -182,9 +178,9 @@ def main():
     zeroshot_output = base_dir / "graph_zeroshot.json"
     fewshot_output = base_dir / "graph_fewshot.json"
 
-    experiment_csv = project_root / "experiment_logs.csv"
-    error_csv = project_root / "error_logs.csv"
-    text_log = project_root / "experiment_logs.txt"
+    experiment_csv = project_root / "pipeline_experiment_logs.csv"
+    error_csv = project_root / "pipeline_error_logs.csv"
+    text_log = project_root / "pipeline_run_log.txt"
 
     append_text_log(str(text_log), "=" * 80)
     append_text_log(
